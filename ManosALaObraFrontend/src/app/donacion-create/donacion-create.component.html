@@ -1,0 +1,214 @@
+<app-header></app-header>
+
+<body>
+  <script
+    src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+  <link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+    type="text/css" />
+  <div class="search-results" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
+    (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
+    <div class="container product-form " style="margin-top: 100px;">
+      <div class="row">
+        <div class="col-10">
+          <h1>Realizar Donación</h1>
+        </div>
+        <div class="col-2">
+          <button type="button" class="btn btn-outline-light" (click)="volverAlHome()">
+            <small>Volver al Home  </small><i class="fa fa-angle-double-left"></i>
+          </button>
+        </div>
+      </div>
+      <hr>
+
+      <div class="row">
+        <form [formGroup]="productoForm" (ngSubmit)="onSaveForm()">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label> Nombre </label>
+              <input type="text" class="form-control" formControlName="nombreProducto">
+
+              <div class=" alert-danger"
+                *ngIf="nombreProducto.invalid && (nombreProducto.dirty || nombreProducto.touched)">
+                <div class="container-error-message" *ngIf="nombreProducto.errors.required">
+                  <h4>El nombre de la donación es obligatorio.</h4>
+                </div>
+                <div class="container-error-message" *ngIf="nombreProducto.errors.minlength">
+                  <h4> El nombre de la donación tiene que ser mayor a 2 caracteres.</h4>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label> Categoría </label>
+              <select type="text" class="form-control" formControlName="categoria">
+                <option value="Alimento no perecedero">Alimento no perecedero</option>
+                <option value="Indumentaria">Indumentaria</option>
+                <option value="Juguete">Juguete</option>
+                <option value="Calzado">Calzado</option>
+                <option value="Objeto recreativo">Objeto recreativo</option>
+                <option value="Otra categoria">Otra categoría</option>
+              </select>
+
+
+            </div>
+
+            <div class="form-group col-md-12">
+              <label> Descripción </label>
+              <input type="text" class="form-control" formControlName="descripcion">
+
+              <div class="alert-danger" *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)">
+                <div class="container-error-message" *ngIf="descripcion.errors.required">
+                  <h4>La descripción de la donación es obligatoria.</h4>
+                </div>
+                <div class="container-error-message" *ngIf="descripcion.errors.minlength">
+                  <h4> La descripción de la donación tiene que ser mayor a 2 caracteres.</h4>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="form-group col-md-12">
+              <label> Email Donante </label>
+              <input type="text" class="form-control" formControlName="emailDonante">
+
+              <div class="alert-danger" *ngIf="emailDonante.invalid && (emailDonante.dirty || emailDonante.touched)">
+                <div class="container-error-message" *ngIf="emailDonante.errors.required">
+                  <h4> Su dirección de email es obligatoria.</h4>
+                </div>
+                <div class="container-error-message" *ngIf="emailDonante.errors.email">
+                  <h4> Debe ingresar una diercción de email válida.</h4>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-group col-md-1.5">
+              <label> Desde </label>
+              <input type="date" class="form-control" formControlName="fechaPublicacion">
+
+              <div class="alert-danger"
+                *ngIf="fechaPublicacion.invalid && (fechaPublicacion.dirty || fechaPublicacion.touched)">
+                <div class="container-error-message" *ngIf="fechaPublicacion.errors.required">
+                  <h4>La fecha de publicación es obligatoria.</h4>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-group col-md-1.5">
+              <label> Hasta </label>
+              <input type="date" class="form-control" formControlName="validoHasta">
+
+              <div class="alert-danger" *ngIf="validoHasta.invalid && (validoHasta.dirty || validoHasta.touched)">
+                <div class="container-error-message" *ngIf="validoHasta.errors.required">
+                  <h4>La fecha límite es obligatoria.</h4>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-group col-md-12">
+              <label> Imagen </label>
+
+              <div class="container">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">            
+                        <div class="form-group">
+                          <input type="file" name="image" (change)="fileProgress($event)"/>
+                        </div>
+                        <div class="form-group">
+                          <button class="btn btn-primary" (click)="deleteFile()"> Eliminar foto </button>
+                        </div>
+                        <div *ngIf="fileUploadProgress">
+                            Upload progress: {{ fileUploadProgress }}
+                        </div>
+                        <div class="image-preview mb-3" *ngIf="previewUrl">
+                            <img [src]="previewUrl" height="200" />      
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <!--<h1> Ubicación de recolección </h1>-->
+            <div class="form-group col-md-12">
+            <label class="ubicacion">Ubicación de recolección</label>
+            </div>
+            <div class="form-group col-md-12">
+              <div id="mapa-mapbox"></div>
+            </div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+            <div class="form-group col-md-6"></div>
+
+            <!-- no es necesario que el usuario vea estos campos
+                <div class="form-group col-md-6">
+                 1 <label> Longitude </label>
+                  <input type="number"  class="form-control"  formControlName="longitude">
+                  <div class=" alert-danger" *ngIf="longitude.invalid && (longitude.dirty || longitude.touched)">
+                    <div class="container-error-message"  *ngIf="longitude.errors.required">
+                      <small>Es necesario colocar longitude del lugar.</small>
+                    </div>
+                  </div>
+               </div>
+
+               <div class="form-group col-md-6">
+                <label> Latitude </label>
+                <input type="number"  class="form-control"  formControlName="latitude">
+                <div class=" alert-danger" *ngIf="latitude.invalid && (latitude.dirty || latitude.touched)">
+                  <div class="container-error-message"  *ngIf="latitude.errors.required">
+                    <small>Es necesario colocar latitude del lugar.</small>
+                  </div>
+                </div>
+               </div>
+               -->
+
+            <div class="form-group col-md-6">
+              <label> Lugar </label>
+              <input type="text" class="form-control" formControlName="lugar">
+
+              <div class="alert-danger" *ngIf="lugar.invalid && (lugar.dirty || lugar.touched)">
+                <div class="container-error-message" *ngIf="lugar.errors.required">
+                  <h4> El lugar de entrega es obligatorio.</h4>
+                </div>
+                <div class="container-error-message" *ngIf="lugar.errors.minlength">
+                  <h4> El lugar de entrega tiene que ser mayor a 2 caracteres.</h4>
+                </div>
+              </div>
+
+            </div>
+
+
+
+          </div>
+
+          <br>
+          <br>
+
+          <button type="submit" class="btn btn-outline-success" [disabled]="!productoForm.valid"> Donar </button>
+        </form>
+
+        <br>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" [hidden]="!alert">
+          <strong> Donación realizada satisfactoriamente </strong> Muchas gracias!
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

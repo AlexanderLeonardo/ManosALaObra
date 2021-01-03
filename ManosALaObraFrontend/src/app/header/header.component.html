@@ -1,0 +1,44 @@
+<!--<p>header works!</p>-->
+<nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">
+      <img src="/assets/img/logomano.png" width="75" height="55" alt="">  Manos a la Obra
+    </a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+  
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"></a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" routerLink="/donacion-create"> Donar producto </a>
+            <a class="dropdown-item" routerLink="/my-donations" (click)="myDonations()"> Mis donaciones </a>
+            <a class="dropdown-item" routerLink="/donations-delivered"> Donaciones entregadas </a>
+            <a class="dropdown-item" routerLink="/ubication"> Mi ubicación </a>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ml-auto ">
+        <li class="nav-item">
+          <div class="btn-group" role="group" aria-label="Basic example">
+
+            <div class="dropdown">
+              <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-user"></i> <span class="badge badge-pill"  >{{data.nombreUsuario}}</span>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item"  (click)="signOut()" > Cerrar sesión </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <h2 style="color:#A495B9;"> Donaciones Online</h2>
+             
+        </li>
+      </ul>
+
+    </div>
+  
+
+  </nav>
